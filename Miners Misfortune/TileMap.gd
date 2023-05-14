@@ -18,7 +18,8 @@ func _process(_delta):
 	
 	if len(allExits) == 0:
 		get_tree().change_scene_to_packed(nextLevel)
-
+		if nextLevel == null:
+			get_tree().change_scene_to_file("res://Levels/Level 0.tscn")
 func _update_paths_and_exits():
 	cellPlayerIsOn = local_to_map(player.position)
 	
