@@ -10,8 +10,12 @@ extends TileTools
 
 var cellPlayerIsOn
 
+var audio : AudioStreamWAV
+var audioPlayer = AudioStreamPlayer.new()
+
 func _ready():
-	pass
+	audioPlayer.volume_db = -10
+	add_child(audioPlayer)
 
 func _process(_delta):
 	_update_paths_and_exits()
@@ -22,9 +26,14 @@ func _process(_delta):
 			get_tree().change_scene_to_file("res://Levels/Level 0.tscn")
 func _update_paths_and_exits():
 	cellPlayerIsOn = local_to_map(player.position)
-	
+
 	if cellPlayerIsOn in allExits:
 		
+		update_cell_atlas(cellPlayerIsOn,0,0,Vector2i(3,3))
+		update_cell_atlas(cellPlayerIsOn+Vector2i(0,1),0,0,Vector2i(3,4))
+		
+		allExits.erase(cellPlayerIsOn)
+	
 		if cellPlayerIsOn in redExits:
 			for cell in get_used_cells(0):
 				if get_cell_atlas_coords(0,cell).y in [6,7,8]:
@@ -35,9 +44,10 @@ func _update_paths_and_exits():
 				if get_cell_atlas_coords(0,cell).y in [9,10,11]:
 					update_cell_atlas(cell,0,0,Vector2i(1,1))
 		
-		update_cell_atlas(cellPlayerIsOn,0,0,Vector2i(3,3))
-		update_cell_atlas(cellPlayerIsOn+Vector2i(0,1),0,0,Vector2i(3,4))
+		audio = load("res://SFX_Mineshaft_Close.wav")
+		audioPlayer.stream = audio
+		audioPlayer.play()
 		
-		allExits.erase(cellPlayerIsOn)
+		await audioPlayer.finished
 	
 	
